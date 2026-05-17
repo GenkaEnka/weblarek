@@ -1,514 +1,202 @@
-# 🛍️ Проектная работа "Веб-ларек"
+# Проектная работа "Веб-ларек"
 
-> Интернет-магазин для веб-разработчиков с товарами для тестирования функциональности
+Стек: HTML, SCSS, TS, Vite
 
-**Стек:** TypeScript · Vite · SCSS · HTML5  
-**Архитектура:** MVP (Model-View-Presenter)  
-**Статус:** ✅ Спринт 8 завершен
+Структура проекта:
+- src/ — исходные файлы проекта
+- src/components/ — папка с JS компонентами
+- src/components/base/ — папка с базовым кодом
 
----
+Важные файлы:
+- index.html — HTML-файл главной страницы
+- src/types/index.ts — файл с типами
+- src/main.ts — точка входа приложения
+- src/scss/styles.scss — корневой файл стилей
+- src/utils/constants.ts — файл с константами
+- src/utils/utils.ts — файл с утилитами
 
-## 📋 Структура проекта
+## Установка и запуск
+Для установки и запуска проекта необходимо выполнить команды
 
 ```
-src/
-├── components/
-│   ├── base/                    # Базовые классы
-│   │   ├── Api.ts              # HTTP клиент
-│   │   ├── Component.ts        # Базовый компонент
-│   │   └── Events.ts           # Брокер событий
-│   ├── models/                 # Модели данных (Model Layer)
-│   │   ├── ProductCatalog.ts  # Каталог товаров
-│   │   ├── Cart.ts            # Корзина покупок
-│   │   └── Buyer.ts           # Данные покупателя
-│   └── services/              # Сервисы коммуникации
-│       └── ClientApi.ts       # Клиент API
-├── types/
-│   └── index.ts               # Типы и интерфейсы
-├── utils/
-│   ├── constants.ts           # Константы
-│   ├── data.ts                # Тестовые данные
-│   └── utils.ts               # Утилиты
-├── scss/                      # Стили
-├── main.ts                    # Точка входа
-└── vite-env.d.ts             # Типы Vite
-```
-
-**Важные файлы:**
-- `index.html` — главная страница
-- `src/types/index.ts` — типы и интерфейсы
-- `src/main.ts` — точка входа приложения
-- `src/scss/styles.scss` — корневой файл стилей
-- `src/utils/constants.ts` — константы приложения
-- `.env` — переменные окружения
-
-## 🚀 Установка и запуск
-
-### Требуемые переменные окружения
-
-Создайте файл `.env` в корне проекта:
-```env
-VITE_API_ORIGIN=https://larek-api.nomoreparties.co
-```
-
-### Установка и запуск
-
-```bash
 npm install
 npm run dev
 ```
 
-или с yarn:
+или
 
-```bash
-yarn install
+```
+yarn
 yarn dev
 ```
+## Сборка
 
-### Сборка для продакшена
-
-```bash
+```
 npm run build
 ```
 
 или
 
-```bash
+```
 yarn build
 ```
----
+# Интернет-магазин «Web-Larёk»
+«Web-Larёk» — это интернет-магазин с товарами для веб-разработчиков, где пользователи могут просматривать товары, добавлять их в корзину и оформлять заказы. Сайт предоставляет удобный интерфейс с модальными окнами для просмотра деталей товаров, управления корзиной и выбора способа оплаты, обеспечивая полный цикл покупки с отправкой заказов на сервер.
 
-## 📖 Описание проекта
+## Архитектура приложения
 
-«Web-Larёk» — это интернет-магазин с товарами для веб-разработчиков, где пользователи могут:
-- ✅ Просматривать каталог товаров
-- ✅ Добавлять товары в корзину
-- ✅ Управлять корзиной
-- ✅ Оформлять заказы с выбором способа оплаты
-- ✅ Отправлять заказы на сервер
+Код приложения разделен на слои согласно парадигме MVP (Model-View-Presenter), которая обеспечивает четкое разделение ответственности между классами слоев Model и View. Каждый слой несет свой смысл и ответственность:
 
-Сайт предоставляет удобный интерфейс с модальными окнами для просмотра деталей товаров, управления корзиной и выбора способа оплаты, обеспечивая полный цикл покупки с отправкой заказов на сервер.
+Model - слой данных, отвечает за хранение и изменение данных.  
+View - слой представления, отвечает за отображение данных на странице.  
+Presenter - презентер содержит основную логику приложения и  отвечает за связь представления и данных.
 
----
+Взаимодействие между классами обеспечивается использованием событийно-ориентированного подхода. Модели и Представления генерируют события при изменении данных или взаимодействии пользователя с приложением, а Презентер обрабатывает эти события используя методы как Моделей, так и Представлений.
 
-## 🏗️ Архитектура приложения
+### Базовый код
 
-Код приложения разделен на **слои согласно парадигме MVP (Model-View-Presenter)**, которая обеспечивает четкое разделение ответственности:
+#### Класс Component
+Является базовым классом для всех компонентов интерфейса.
+Класс является дженериком и принимает в переменной `T` тип данных, которые могут быть переданы в метод `render` для отображения.
 
-| Слой | Назначение | Компоненты |
-|------|-----------|-----------|
-| **Model** | Хранение и управление данными | ProductCatalog, Cart, Buyer |
-| **View** | Отображение данных на странице | (Спринт 2) |
-| **Presenter** | Логика приложения и взаимодействие | (Спринт 2) |
-| **Services** | Коммуникация с внешними системами | ClientApi, Api |
+Конструктор:  
+`constructor(container: HTMLElement)` - принимает ссылку на DOM элемент за отображение, которого он отвечает.
 
-**Ключевые принципы:**
-- 🔄 **Событийно-ориентированный подход** — все компоненты взаимодействуют через события
-- 🎯 **Разделение ответственности** — каждый класс отвечает за одну задачу
-- 🔐 **Независимость слоев** — Model не зависит от View
-- 📏 **Типобезопасность** — полная типизация всех данных
+Поля класса:  
+`container: HTMLElement` - поле для хранения корневого DOM элемента компонента.
 
----
+Методы класса:  
+`render(data?: Partial<T>): HTMLElement` - Главный метод класса. Он принимает данные, которые необходимо отобразить в интерфейсе, записывает эти данные в поля класса и возвращает ссылку на DOM-элемент. Предполагается, что в классах, которые будут наследоваться от `Component` будут реализованы сеттеры для полей с данными, которые будут вызываться в момент вызова `render` и записывать данные в необходимые DOM элементы.  
+`setImage(element: HTMLImageElement, src: string, alt?: string): void` - утилитарный метод для модификации DOM-элементов `<img>`
 
-## 🔧 Базовый код
 
-### 🔹 Класс Component
+#### Класс Api
+Содержит в себе базовую логику отправки запросов.
 
-Базовый класс для всех компонентов интерфейса. Является дженериком и принимает тип данных `T`.
+Конструктор:  
+`constructor(baseUrl: string, options: RequestInit = {})` - В конструктор передается базовый адрес сервера и опциональный объект с заголовками запросов.
 
-**Конструктор:**  
-`constructor(container: HTMLElement)` — принимает ссылку на DOM элемент за отображение которого он отвечает.
+Поля класса:  
+`baseUrl: string` - базовый адрес сервера  
+`options: RequestInit` - объект с заголовками, которые будут использованы для запросов.
 
-**Методы:**
-- `render(data?: Partial<T>): HTMLElement` — главный метод класса. Отображает данные в интерфейс.
-- `setImage(element: HTMLImageElement, src: string, alt?: string): void` — утилитарный метод для модификации изображений
+Методы:  
+`get(uri: string): Promise<object>` - выполняет GET запрос на переданный в параметрах ендпоинт и возвращает промис с объектом, которым ответил сервер  
+`post(uri: string, data: object, method: ApiPostMethods = 'POST'): Promise<object>` - принимает объект с данными, которые будут переданы в JSON в теле запроса, и отправляет эти данные на ендпоинт переданный как параметр при вызове метода. По умолчанию выполняется `POST` запрос, но метод запроса может быть переопределен заданием третьего параметра при вызове.  
+`handleResponse(response: Response): Promise<object>` - защищенный метод проверяющий ответ сервера на корректность и возвращающий объект с данными полученный от сервера или отклоненный промис, в случае некорректных данных.
 
----
+#### Класс EventEmitter
+Брокер событий реализует паттерн "Наблюдатель", позволяющий отправлять события и подписываться на события, происходящие в системе. Класс используется для связи слоя данных и представления.
 
-### 🔹 Класс Api
+Конструктор класса не принимает параметров.
 
-Класс для отправки HTTP запросов к серверу.
+Поля класса:  
+`_events: Map<string | RegExp, Set<Function>>)` -  хранит коллекцию подписок на события. Ключи коллекции - названия событий или регулярное выражение, значения - коллекция функций обработчиков, которые будут вызваны при срабатывании события.
 
-**Конструктор:**  
-`constructor(baseUrl: string, options: RequestInit = {})` — передается адрес сервера и опциональные заголовки.
+Методы класса:  
+`on<T extends object>(event: EventName, callback: (data: T) => void): void` - подписка на событие, принимает название события и функцию обработчик.  
+`emit<T extends object>(event: string, data?: T): void` - инициализация события. При вызове события в метод передается название события и объект с данными, который будет использован как аргумент для вызова обработчика.  
+`trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void` - возвращает функцию, при вызове которой инициализируется требуемое в параметрах событие с передачей в него данных из второго параметра.
 
-**Методы:**
-- `get(uri: string): Promise<object>` — выполняет GET запрос
-- `post(uri: string, data: object, method: ApiPostMethods = 'POST'): Promise<object>` — выполняет POST/PUT/DELETE запрос
-- `handleResponse(response: Response): Promise<object>` — защищенный метод проверки ответа сервера
-
----
-
-### 🔹 Класс EventEmitter
-
-Брокер событий реализует паттерн "Наблюдатель", позволяя отправлять события и подписываться на события.
-
-**Методы:**
-- `on<T extends object>(event: EventName, callback: (data: T) => void): void` — подписка на событие
-- `emit<T extends object>(event: string, data?: T): void` — срабатывание события
-- `trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void` — создание триггера события
-
----
-
-## Данные (Спринт 1)
-
-### Типы и интерфейсы
-
-#### Тип TPayment
-Описывает доступные способы оплаты:
-```typescript
-type TPayment = 'card' | 'cash' | '';
-```
+### Данные
 
 #### Интерфейс IProduct
-Описывает структуру товара в каталоге:
-```typescript
-interface IProduct {
-  id: string;              // Уникальный идентификатор
-  description: string;     // Полное описание товара
-  image: string;          // Путь к изображению товара
-  title: string;          // Название товара
-  category: string;       // Категория товара
-  price: number | null;   // Цена товара (null = недоступно)
-}
-```
+Описывает совйства которыми должны обладть все карточки товара.
+
+Каждая карточка товара доллжна реализовывать этот интерфейс.
+
+Поля интерфейса:  
+`id: string` - поле для хранения идентификатора товара.  
+`description: string` - поле для хранения описания товара.  
+`image: string` - поле для хранения картинки товара.  
+`title: string` - поле для хранения заголовка карточки товара.  
+`category: string` - категория товара;
+`price: number | null` - поле для хранения цены товара.  
 
 #### Интерфейс IBuyer
-Описывает данные покупателя:
-```typescript
-interface IBuyer {
-  payment: TPayment;  // Способ оплаты
-  email: string;      // Электронная почта
-  phone: string;      // Номер телефона
-  address: string;    // Адрес доставки
-}
-```
+Описывает совйства которыми должны обладть все учетки покупателей.
 
-#### Тип TBuyerErrors
-Описывает ошибки валидации данных покупателя:
-```typescript
-type TBuyerErrors = Partial<Record<keyof IBuyer, string>>;
-```
+Каждая учетка покупателя доллжна реализовывать этот интерфейс.
 
-#### Интерфейс IApi
-Описывает методы работы с API:
-```typescript
-interface IApi {
-  get<T extends object>(uri: string): Promise<T>;
-  post<T extends object>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
-}
-```
+Поля интерфейса:  
+`payment: TPayment` - тип оплаты который выбрал покупатель.  
+`email: string` - поле для хранения электронной почты покупателя.  
+`phone: string` - поле для хранения телефона покупателя.  
+`address: string` - поле для хранения адреса покупателя.  
 
-#### Типы для API запросов
+### Модели данных
 
-**TGetResponse** — ответ сервера при получении каталога:
-```typescript
-type TGetResponse = {
-  total: number;
-  items: IProduct[];
-}
-```
+#### Класс ProductCatalog
+Хранит массив всех товаров и содержит сущность карточки, выбранной для подробного отображения.
 
-**TPostResponse** — ответ сервера при создании заказа:
-```typescript
-type TPostResponse = {
-  id: string;
-  total: number;
-}
-```
+Конструктор:  
+`constructor(productsList: IProduct[], focusCard: IProduct = null)` - В конструктор передается массив доступных товаров и опциональный объект с выбранным товаром.
 
-**TPostRequest** — данные для отправки заказа:
-```typescript
-type TPostRequest = {
-  payment: TPayment;
-  email: string;
-  phone: string;
-  address: string;
-  total: number;
-  items: string[];
-}
-```
+Поля класса:  
+`private productsList: IProduct[]` - массив товаров.  
+`private focusCard: IProduct | null` - объект с выбранным товаром.
 
----
+Методы:  
+`get productsList(): IProduct[]` - метод возвращает хранимый массив товаров.  
+`set productsList(productsList: IProduct[])` - метод сохраняет измененный массив товаров.  
+`getProductByID(id: string):IProduct | null` - получение одного товара по его id.  
+`get focusCard(): IProduct | null` - получение товара для подробного отображения из переменной focusCard.  
+`set focusCard(product: IProduct)` - сохранение товара для подробного отображения в переменную focusCard.   
 
-## Модели данных (Спринт 1)
+#### Класс Cart
+Класс Cart хранит массив товаров, выбранных покупателем для покупки.
 
-### Класс ProductCatalog
+Конструктор:  
+`constructor()` - Конструктор поумолчанию. Инициализирует поле productsList пустым массивом, что бы не нарваться на undefined.
 
-Хранит массив всех товаров и товар, выбранный для подробного просмотра.
+Поля класса:   
+`private productsList: IProduct[]` - массив выбранных покупателем товаров.
 
-**Конструктор:**
-```typescript
-constructor(productsList?: IProduct[], focusCard?: IProduct | null)
-```
+Методы:  
+`get productsList(): IProduct[]` - получение массива товаров, который находится в корзине.  
+`addProduct(product: IProduct): void` - добавление товара, который был получен в параметре, в массив корзины.  
+`discardProduct(product: IProduct): void` - удаление товара, полученного в параметре из массива корзины.  
+`cleanCart(): void` - очистка корзины.  
+`getTotalCartPrice(): number` - получение стоимости всех товаров в корзине.  
+`getProductCountInCart: number` - получение количества товаров в корзине.  
+`isProductInCartById(id: string): boolean` - проверка наличия товара в корзине по его id, полученного в параметр метода.  
 
-**Методы:**
-- `set productsList(items: IProduct[])` — сохранить массив товаров
-- `get productsList(): IProduct[]` — получить массив товаров
-- `getProductByID(id: string): IProduct | undefined` — найти товар по id
-- `set focusCard(product: IProduct | null)` — установить товар в фокус
-- `get focusCard(): IProduct | null` — получить товар из фокуса
+#### Класс Buyer
+Класс Buyer хранит информацию о покупателе.
 
-**Особенности:**
-- Хранит полный каталог товаров
-- Отслеживает товар, выбранный пользователем для подробного просмотра
-- Независим от представления и других слоев
+Конструктор:  
+`constructor()` - Конструктор по умолчанию заполняет поля пустыми значениями.
 
----
+Поля класса:  
+`private payment: TPayment` - способ оплаты выбранный пользователем.  
+`private adress: string` - адресс пользоватля.  
+`private phone: string` - телефон пользоватля.  
+`private email: string` - электронная почта пользоватля.  
 
-### Класс Cart
+Методы:  
+`get payment(): TPayment` - получить способ оплаты выбранный пользователем.  
+`set payment(val: TPayment)` - установить способ оплаты выбранный пользователем.  
+`get adress(): string` - получить адресс пользоватля.  
+`set adress(val: string)` - установить адресс пользоватля.  
+`get phone(): string` - получить телефон пользоватля.  
+`set phone(val: string)` - установить телефон пользоватля.  
+`get email(): string` - получить электронная почта пользоватля.  
+`set email(val: string)` - установить электронная почта пользоватля.  
+`cleanBuyerData(): void` - сброс всех данных пользователя
+`validation(): TBuyerErrors ` - валидация способа оплаты, адреса, телефона и электронной почты пользоватля. Метод возвращает объект с полями соответствующими полям класса не прошедшим валидацию. В значении ключа указанна причина инвалидации. Если поля нет в возвращаемом объекте, значит оно валидное.
 
-Управление корзиной покупок и расчет стоимости.
-
-**Конструктор:**
-```typescript
-constructor()
-```
-
-**Методы:**
-- `get productsList(): IProduct[]` — получить товары в корзине
-- `addProduct(product: IProduct): void` — добавить товар в корзину
-- `removeProduct(product: IProduct): void` — удалить товар из корзины
-- `cleanCart(): void` — очистить всю корзину
-- `getTotalCartPrice(): number` — получить сумму всех товаров
-- `getProductCountInCart(): number` — получить количество товаров
-- `isProductInCartById(id: string): boolean` — проверить наличие товара по id
-
-**Особенности:**
-- Автоматический расчет стоимости корзины
-- Проверка наличия товара перед удалением
-- Поддержка пустой корзины
-
----
-
-### Класс Buyer
-
-Управление данными и валидация информации покупателя.
-
-**Конструктор:**
-```typescript
-constructor()
-```
-
-**Методы:**
-- `get payment(): TPayment` / `set payment(val: TPayment)` — способ оплаты
-- `get address(): string` / `set address(val: string)` — адрес доставки
-- `get phone(): string` / `set phone(val: string)` — номер телефона
-- `get email(): string` / `set email(val: string)` — адрес электронной почты
-- `cleanBuyerData(): void` — очистить все данные
-- `validation(): TBuyerErrors` — валидировать данные
-
-**Правила валидации:**
-- Все поля обязательны
-- Поле считается ошибочным, если пусто
-- Возвращаемый объект содержит только невалидные поля
-- Если ошибок нет, возвращается пустой объект
-
-**Пример валидации:**
-```typescript
-const buyer = new Buyer();
-buyer.payment = 'card';
-buyer.address = 'Москва, ул. Лесная, 5';
-
-const errors = buyer.validation();
-// { email: 'Укажите электронную почту', phone: 'Укажите телефон' }
-```
-
----
-
-## Слой коммуникации (Спринт 1)
+### Слой коммуникации
 
 ### Класс ClientApi
+Класс ClientApi предназначен для взаимодействия с другими приложениями и хранилищами.
 
-Класс для взаимодействия приложения с сервером.
+Конструктор:
+`constructor(api: IApi)` - В конструктор передаётся объекта удволетворяющий интерфейс IApi для работы c требуемым хранилищем.
 
-**Конструктор:**
-```typescript
-constructor(api: IApi)
-```
+Поля класса:
+`api: IApi` - поле хранит объект отвечающий за работу с выбранным типом хранилища
 
-**Методы:**
+Методы:
+`async getData(): Promise<IProduct[]>` - асинхронный метод запрашивает данные с сервера.
 
-#### `async getData(): Promise<TGetResponse>`
-Получение каталога товаров с сервера.
-
-**Запрос:** `GET /api/weblarek/product`
-
-**Ответ:**
-```typescript
-{
-  total: 10,
-  items: [
-    { id: '...', title: '...', price: 750, ... },
-    ...
-  ]
-}
-```
-
-#### `async setData(data: TPostRequest): Promise<TPostResponse>`
-Отправка заказа на сервер.
-
-**Запрос:** `POST /api/weblarek/order`
-
-**Параметры:**
-```typescript
-{
-  payment: 'card',
-  email: 'buyer@example.com',
-  phone: '+7 (999) 999-99-99',
-  address: 'Москва, ул. Лесная, 5',
-  total: 2200,
-  items: ['id1', 'id2']
-}
-```
-
-**Ответ:**
-```typescript
-{
-  id: 'order-123',
-  total: 2200
-}
-```
-
----
-
-## Примеры использования
-
-### Инициализация моделей
-
-```typescript
-import { ProductCatalog, Cart, Buyer } from './components/models';
-import { ClientApi } from './components/services/ClientApi';
-import { Api } from './components/base/Api';
-
-// Создание моделей данных
-const catalog = new ProductCatalog();
-const cart = new Cart();
-const buyer = new Buyer();
-
-// Создание API сервиса
-const api = new Api(import.meta.env.VITE_API_ORIGIN);
-const clientApi = new ClientApi(api);
-```
-
-### Получение товаров с сервера
-
-```typescript
-clientApi.getData()
-  .then((data: TGetResponse) => {
-    catalog.productsList = data.items;
-    console.log(`Загружено товаров: ${data.total}`);
-  })
-  .catch((error) => {
-    console.error('Ошибка при загрузке товаров:', error);
-  });
-```
-
-### Работа с корзиной
-
-```typescript
-// Получить товар по id
-const product = catalog.getProductByID('c101ab44-ed99-4a54-990d-47aa2bb4e7d9');
-
-if (product && product.price !== null) {
-  // Добавить в корзину
-  cart.addProduct(product);
-  console.log(`Товар добавлен. В корзине: ${cart.getProductCountInCart()} шт`);
-  console.log(`Сумма: ${cart.getTotalCartPrice()} синапсов`);
-}
-
-// Проверить наличие товара
-if (cart.isProductInCartById(product.id)) {
-  console.log('Товар уже в корзине');
-  cart.removeProduct(product);
-}
-
-// Очистить корзину
-cart.cleanCart();
-```
-
-### Валидация и отправка заказа
-
-```typescript
-// Заполнить данные покупателя
-buyer.payment = 'card';
-buyer.address = 'Москва, ул. Лесная, 5';
-buyer.email = 'buyer@example.com';
-buyer.phone = '+7 (999) 999-99-99';
-
-// Валидировать
-const errors = buyer.validation();
-
-if (Object.keys(errors).length === 0) {
-  // Подготовить данные для отправки
-  const orderData: TPostRequest = {
-    payment: buyer.payment,
-    email: buyer.email,
-    phone: buyer.phone,
-    address: buyer.address,
-    total: cart.getTotalCartPrice(),
-    items: cart.productsList.map(p => p.id)
-  };
-
-  // Отправить заказ
-  clientApi.setData(orderData)
-    .then((response) => {
-      console.log(`Заказ успешно создан: ${response.id}`);
-      cart.cleanCart();
-      buyer.cleanBuyerData();
-    })
-    .catch((error) => {
-      console.error('Ошибка при создании заказа:', error);
-    });
-} else {
-  console.log('Ошибки валидации:', errors);
-}
-```
-
----
-
-## Конфигурация
-
-### Переменные окружения (.env)
-
-```env
-VITE_API_ORIGIN=https://larek-api.nomoreparties.co
-```
-
-### Константы (src/utils/constants.ts)
-
-```typescript
-export const API_URL = `${import.meta.env.VITE_API_ORIGIN}/api/weblarek`;
-export const CDN_URL = `${import.meta.env.VITE_API_ORIGIN}/content/weblarek`;
-
-export const categoryMap = {
-  'софт-скил': 'card__category_soft',
-  'хард-скил': 'card__category_hard',
-  'кнопка': 'card__category_button',
-  'дополнительное': 'card__category_additional',
-  'другое': 'card__category_other',
-};
-```
-
----
-
-## Статус разработки
-
-### ✅ Спринт 8: Проектирование архитектуры (Завершен)
-- [x] Типизация данных (IProduct, IBuyer, TPayment)
-- [x] Типы для API запросов (TGetResponse, TPostResponse, TPostRequest)
-- [x] Класс ProductCatalog с управлением каталогом
-- [x] Класс Cart с расчетом стоимости
-- [x] Класс Buyer с валидацией
-- [x] Класс ClientApi для работы с сервером
-- [x] Тестирование всех методов в main.ts
-- [x] Конфигурация окружения (.env)
-- [x] Полная документация
-
-### 📋 Спринт 9: ~~~ (В разработке)
-- [ ] ~~~
-- [ ] ~~~
-- [ ] ~~~
-- [ ] ~~~
-
-https://github.com/GenkaEnka/weblarek
+`async set(data: object): Promise<TPostResponse>` - асинхронный метод  передаёт в хранилище данные, полученные в параметре data, а возвращает объект, подтверждающий покупку на определенную сумму.
