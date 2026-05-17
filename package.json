@@ -8,9 +8,23 @@
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
+  
   "devDependencies": {
     "sass-embedded": "^1.90.0",
     "typescript": "~5.8.3",
     "vite": "^7.1.0"
-  }
+  },
+  "description": "Стек: HTML, SCSS, TS, Vite",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tochitopor/weblarek.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tochitopor/weblarek/issues"
+  },
+  "homepage": "https://github.com/tochitopor/weblarek#readme"
 }

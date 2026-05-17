@@ -1,5 +1,5 @@
-// Хорошая практика даже простые типы выносить в алиасы
-// Зато когда захотите поменять это достаточно сделать в одном месте
+// Best practice: define even simple types as aliases
+// This makes it easy to change them in one place if needed
 type EventName = string | RegExp;
 type Subscriber = Function;
 type EmitterEvent = {
@@ -14,9 +14,9 @@ export interface IEvents {
 }
 
 /**
- * Брокер событий, классическая реализация
- * В расширенных вариантах есть возможность подписаться на все события
- * или слушать события по шаблону например
+ * Event broker implementation
+ * Extended versions can support subscribing to all events
+ * or listening to events by pattern
  */
 export class EventEmitter implements IEvents {
     _events: Map<EventName, Set<Subscriber>>;
@@ -26,7 +26,7 @@ export class EventEmitter implements IEvents {
     }
 
     /**
-     * Установить обработчик на событие
+     * Subscribe to event
      */
     on<T extends object>(eventName: EventName, callback: (event: T) => void) {
         if (!this._events.has(eventName)) {
@@ -36,7 +36,7 @@ export class EventEmitter implements IEvents {
     }
 
     /**
-     * Снять обработчик с события
+     * Unsubscribe from event
      */
     off(eventName: EventName, callback: Subscriber) {
         if (this._events.has(eventName)) {
@@ -48,7 +48,7 @@ export class EventEmitter implements IEvents {
     }
 
     /**
-     * Инициировать событие с данными
+     * Trigger event with data
      */
     emit<T extends object>(eventName: string, data?: T) {
         this._events.forEach((subscribers, name) => {
@@ -63,21 +63,21 @@ export class EventEmitter implements IEvents {
     }
 
     /**
-     * Слушать все события
+     * Listen to all events
      */
     onAll(callback: (event: EmitterEvent) => void) {
         this.on("*", callback);
     }
 
     /**
-     * Сбросить все обработчики
+     * Reset all handlers
      */
     offAll() {
         this._events = new Map<string, Set<Subscriber>>();
     }
 
     /**
-     * Сделать коллбек триггер, генерирующий событие при вызове
+     * Create a trigger callback that generates an event when called
      */
     trigger<T extends object>(eventName: string, context?: Partial<T>) {
         return (event: object = {}) => {

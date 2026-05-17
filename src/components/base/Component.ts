@@ -1,14 +1,12 @@
 /**
- * Базовый компонент
+ * Base component class
  */
 export abstract class Component<T> {
-    protected constructor(protected readonly container: HTMLElement) {
-        // Учитывайте что код в конструкторе исполняется ДО всех объявлений в дочернем классе
-    }
+    protected constructor(protected readonly container: HTMLElement) {}
 
-    // Инструментарий для работы с DOM в дочерних компонентах
+    // DOM manipulation utilities for child components
 
-    // Установить изображение с альтернативным текстом
+    // Set image with alternative text
     protected setImage(element: HTMLImageElement, src: string, alt?: string) {
         if (element) {
             element.src = src;
@@ -18,7 +16,7 @@ export abstract class Component<T> {
         }
     }
 
-    // Вернуть корневой DOM-элемент
+    // Return root DOM element
     render(data?: Partial<T>): HTMLElement {
         Object.assign(this as object, data ?? {});
         return this.container;
