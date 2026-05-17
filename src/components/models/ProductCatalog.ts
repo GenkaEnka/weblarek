@@ -4,9 +4,9 @@ export class ProductCatalog {
     private _productsList: IProduct[];
     private _focusCard: IProduct | null;
 
-    constructor(productsList: IProduct[], focusCard: IProduct | null = null) {
-        this._productsList = productsList;
-        this._focusCard = focusCard;
+    constructor() {
+        this._productsList = [];
+        this._focusCard = null;
     }
 
     get productsList(): IProduct[] {

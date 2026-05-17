@@ -35,9 +35,7 @@ export class Cart {
     }
 
     isProductInCartById(id: string): boolean {
-        return this._productsList.some( item => {
-            return item.id === id ? true : false;
-        });
+        return this._productsList.some(item => item.id === id);
 
     }
 }

@@ -7,23 +7,20 @@ import {ClientApi} from './components/services/ClientApi';
 import {Api} from './components/base/Api';
 
 import {apiProducts} from './utils/data';
-import {initProducts} from './utils/data';
 
 import {IProduct} from './types/index.ts'
 import {TGetResponse} from './types/index.ts'
 import {TPostResponse} from './types/index.ts'
 import {TPostRequest} from './types/index.ts'
-
-
-const BASE_URL = import.meta.env.VITE_API_ORIGIN;
+import {API_URL} from './utils/constants.ts'
 
 // ProductCatalog initialization
 console.log('\n=== ProductCatalog Testing ===');
 
-const productCatalog = new ProductCatalog(initProducts, null);
+const productCatalog = new ProductCatalog();
 console.log('Create ProductCatalog object: ', JSON.stringify(productCatalog, null, 2));
 
-console.log('Get products list: ', JSON.stringify(productCatalog.productsList, null, 2));
+console.log('Get products list (initially empty): ', JSON.stringify(productCatalog.productsList, null, 2));
 
 productCatalog.productsList = apiProducts.items;
 console.log('Update products list: ', JSON.stringify(productCatalog.productsList, null, 2));
@@ -31,9 +28,9 @@ console.log('Update products list: ', JSON.stringify(productCatalog.productsList
 console.log('Successful product search by id: ', productCatalog.getProductByID('c101ab44-ed99-4a54-990d-47aa2bb4e7d9'));
 console.log('Failed product search by id: ', productCatalog.getProductByID('124'));
 
-console.log('Get focus card (null): ', productCatalog.focusCard);
+console.log('Get focus card (initially null): ', productCatalog.focusCard);
 
-productCatalog.focusCard = initProducts[0];
+productCatalog.focusCard = apiProducts.items[0];
 console.log('Set focus card: ', productCatalog.focusCard);
 
 // Buyer data initialization
@@ -101,7 +98,7 @@ console.log('Clean cart: ', JSON.stringify(cart.productsList, null, 2));
 
 // Server integration
 console.log('\n=== ClientApi Testing ===');
-const clientApi: ClientApi = new ClientApi(new Api(BASE_URL));
+const clientApi: ClientApi = new ClientApi(new Api(API_URL));
 
 async function getRemoteCatalog() {
     try {
