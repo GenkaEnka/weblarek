@@ -15,7 +15,7 @@
 @use "../common.blocks/basket";
 @use "../common.blocks/order";
 @use "../common.blocks/order-success";
-@use "../common.blocks/containers";
 
-@use "variables" as *;
+
+@use "../scss/variables" as *;
 @use "mixins";

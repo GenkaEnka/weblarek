@@ -1,5 +1,5 @@
-@use "variables" as *;
-@use "mixins";
+@use "../scss/variables" as *;
+@use "../scss/mixins";
 
 .card {
   @include mixins.flex(column);
@@ -8,10 +8,12 @@
   background-color: $primary;
   color: white;
   padding: $defaultPadding;
+  align-items: flex-start;
 
   &_full {
     flex-direction: row;
     background-color: transparent;
+    align-items: center;
 
     .card__title {
       flex-grow: 0;
@@ -32,6 +34,7 @@
   &__column {
     @include mixins.flex(column);
     align-items: flex-start;
+    height: 390px;
   }
 
   &__row {
@@ -44,6 +47,7 @@
     height: 390px;
     aspect-ratio: 1;
     margin: 3.75rem;
+    align-self: center;
   }
   &__title {
     font-size: $titleFontSize;
@@ -78,9 +82,7 @@
     }
   }
   &__action {
-
   }
   &__price {
-
   }
 }

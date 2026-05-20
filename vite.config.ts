@@ -1,13 +1,18 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vite';
 
 export default defineConfig({
-  css: {
-    preprocessorOptions: {
-      scss: {
-        loadPaths: [
-          './src/scss'
-        ],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://larek-api.nomoreparties.co',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '/api'),
+      },
+      '/content': {
+        target: 'https://larek-api.nomoreparties.co',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/content/, '/content'),
       },
     },
   },
-})
+});
