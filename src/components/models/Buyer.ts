@@ -1,4 +1,5 @@
 import {TPayment} from '../../types/index.ts'
+import {IEvents} from '../base/Events'
 import {TBuyerErrors} from '../../types/index.ts'
 
 export class Buyer {
@@ -6,12 +7,14 @@ export class Buyer {
     private _address: string;
     private _phone: string;
     private _email: string;
+    private _events: IEvents;
     
-    constructor() {
+    constructor(events: IEvents) {
         this._payment = '';
         this._address = '';
         this._phone = '';
         this._email = '';
+        this._events = events;
     }
     
     get payment(): TPayment {
@@ -20,6 +23,7 @@ export class Buyer {
 
     set payment(val: TPayment) {
         this._payment = val;
+        this._events.emit('buyer:changed');
     }
 
     get address(): string {
@@ -28,6 +32,7 @@ export class Buyer {
 
     set address(val: string) {
         this._address = val;
+        this._events.emit('buyer:changed');
     }
 
     get phone(): string {
@@ -36,6 +41,7 @@ export class Buyer {
 
     set phone(val: string) {
         this._phone = val;
+        this._events.emit('buyer:changed');
     }
 
     get email(): string {
@@ -44,6 +50,7 @@ export class Buyer {
 
     set email(val: string) {
         this._email = val;
+        this._events.emit('buyer:changed');
     }
 
     cleanBuyerData(): void {
@@ -51,6 +58,7 @@ export class Buyer {
             this._address = '';
             this._phone = '';
             this._email = '';
+            this._events.emit('buyer:changed');
     }
 
     validation(): TBuyerErrors {

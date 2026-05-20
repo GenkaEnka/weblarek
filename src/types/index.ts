@@ -25,6 +25,8 @@ export interface IApi {
     post<T extends object>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
 }
 
+export type FormErrors = Partial<Record<string, string>>;
+
 export type TGetResponse = {
     total: number,
 	items: IProduct[]
@@ -38,4 +40,4 @@ export type TPostResponse = {
 export type TPostRequest = IBuyer & {
     total: number,
     items: string[]
-} 
+}
