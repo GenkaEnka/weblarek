@@ -1,5 +1,6 @@
 import {TPayment} from '../../types/index.ts'
 import {TBuyerErrors} from '../../types/index.ts'
+import {IEvents} from '../base/Events.ts'
 
 export class Buyer {
     private _payment: TPayment;
@@ -7,7 +8,7 @@ export class Buyer {
     private _phone: string;
     private _email: string;
     
-    constructor() {
+    constructor(protected events: IEvents) {
         this._payment = '';
         this._address = '';
         this._phone = '';
@@ -20,6 +21,7 @@ export class Buyer {
 
     set payment(val: TPayment) {
         this._payment = val;
+        this.events.emit('buyer:changed', this.getBuyerData());
     }
 
     get address(): string {
@@ -28,6 +30,7 @@ export class Buyer {
 
     set address(val: string) {
         this._address = val;
+        this.events.emit('buyer:changed', this.getBuyerData());
     }
 
     get phone(): string {
@@ -36,6 +39,7 @@ export class Buyer {
 
     set phone(val: string) {
         this._phone = val;
+        this.events.emit('buyer:changed', this.getBuyerData());
     }
 
     get email(): string {
@@ -44,6 +48,16 @@ export class Buyer {
 
     set email(val: string) {
         this._email = val;
+        this.events.emit('buyer:changed', this.getBuyerData());
+    }
+
+    getBuyerData() {
+        return {
+            payment: this._payment,
+            address: this._address,
+            phone: this._phone,
+            email: this._email
+        };
     }
 
     cleanBuyerData(): void {
@@ -51,6 +65,7 @@ export class Buyer {
             this._address = '';
             this._phone = '';
             this._email = '';
+            this.events.emit('buyer:changed', this.getBuyerData());
     }
 
     validation(): TBuyerErrors {

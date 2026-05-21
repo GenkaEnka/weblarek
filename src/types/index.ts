@@ -38,4 +38,14 @@ export type TPostResponse = {
 export type TPostRequest = IBuyer & {
     total: number,
     items: string[]
-} 
+}
+
+export interface IOrderForm {
+    payment: TPayment;
+    address: string;
+}
+
+export interface IContactsForm {
+    email: string;
+    phone: string;
+}

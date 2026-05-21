@@ -1,150 +1,301 @@
 import './scss/styles.scss';
 
-import {Buyer} from './components/models/Buyer';
-import {Cart} from './components/models/Cart';
-import {ProductCatalog} from './components/models/ProductCatalog';
-import {ClientApi} from './components/services/ClientApi';
-import {Api} from './components/base/Api';
+import { EventEmitter, IEvents } from './components/base/Events';
+import { ProductCatalog } from './components/models/ProductCatalog';
+import { Cart } from './components/models/Cart';
+import { Buyer } from './components/models/Buyer';
+import { ClientApi } from './components/services/ClientApi';
+import { Api } from './components/base/Api';
 
-import {apiProducts} from './utils/data';
+import { API_URL } from './utils/constants';
+import { cloneTemplate } from './utils/utils';
 
-import {IProduct} from './types/index.ts'
-import {TGetResponse} from './types/index.ts'
-import {TPostResponse} from './types/index.ts'
-import {TPostRequest} from './types/index.ts'
-import {API_URL} from './utils/constants.ts'
+import { IProduct, TPayment, TGetResponse, TPostResponse, TPostRequest } from './types/index';
 
-// ProductCatalog initialization
-console.log('\n=== ProductCatalog Testing ===');
+// View components
+import { Page } from './components/view/Page';
+import { Modal } from './components/view/Modal';
+import { Basket } from './components/view/Basket';
+import { CardCatalog } from './components/view/CardCatalog';
+import { CardPreview } from './components/view/CardPreview';
+import { CardBasket } from './components/view/CardBasket';
+import { OrderForm } from './components/view/OrderForm';
+import { ContactsForm } from './components/view/ContactsForm';
+import { Success } from './components/view/Success';
 
-const productCatalog = new ProductCatalog();
-console.log('Create ProductCatalog object: ', JSON.stringify(productCatalog, null, 2));
+// ===== Event Broker =====
+const events: IEvents = new EventEmitter();
 
-console.log('Get products list (initially empty): ', JSON.stringify(productCatalog.productsList, null, 2));
+// ===== Models =====
+const productCatalog = new ProductCatalog(events);
+const cart = new Cart(events);
+const buyer = new Buyer(events);
 
-productCatalog.productsList = apiProducts.items;
-console.log('Update products list: ', JSON.stringify(productCatalog.productsList, null, 2));
+// ===== API =====
+const api = new ClientApi(new Api(API_URL));
 
-console.log('Successful product search by id: ', productCatalog.getProductByID('c101ab44-ed99-4a54-990d-47aa2bb4e7d9'));
-console.log('Failed product search by id: ', productCatalog.getProductByID('124'));
+// ===== View Components =====
+const page = new Page(document.body, events);
+const modal = new Modal(document.getElementById('modal-container') as HTMLElement, events);
+const basket = new Basket(document.getElementById('basket') as HTMLTemplateElement, events);
 
-console.log('Get focus card (initially null): ', productCatalog.focusCard);
+// Card templates
+const cardCatalogTemplate = document.getElementById('card-catalog') as HTMLTemplateElement;
+const cardPreviewTemplate = document.getElementById('card-preview') as HTMLTemplateElement;
+const cardBasketTemplate = document.getElementById('card-basket') as HTMLTemplateElement;
 
-productCatalog.focusCard = apiProducts.items[0];
-console.log('Set focus card: ', productCatalog.focusCard);
+// Form templates
+const orderTemplate = document.getElementById('order') as HTMLTemplateElement;
+const contactsTemplate = document.getElementById('contacts') as HTMLTemplateElement;
 
-// Buyer data initialization
-console.log('\n=== Buyer Testing ===');
+// ===== Form instances (created once per form) =====
+let currentOrderForm: OrderForm | null = null;
+let currentContactsForm: ContactsForm | null = null;
 
-const buyer = new Buyer();
-console.log('Create Buyer object: ', JSON.stringify(buyer, null, 2));
+// ===== Helper functions =====
 
-console.log('Get payment method: ', buyer.payment);
+function validateOrderForm() {
+    const errors = buyer.validation();
+    const hasPaymentError = !!errors.payment;
+    const hasAddressError = !!errors.address;
 
-buyer.payment = 'cash';
-console.log('Update payment method: ', buyer.payment);
+    if (currentOrderForm) {
+        currentOrderForm.valid = !hasPaymentError && !hasAddressError;
 
-console.log('Get address: ', buyer.address);
-
-buyer.address = 'Mars';
-console.log('Update address: ', buyer.address);
-
-console.log('Get phone: ', buyer.phone);
-
-buyer.phone = '555 55 55';
-console.log('Update phone: ', buyer.phone);
-
-console.log('Get email: ', buyer.email);
-
-buyer.email = 'contact@example.com';
-console.log('Update email: ', buyer.email);
-
-console.log('Validation check - all fields valid: ', buyer.validation());
-
-buyer.payment = '';
-buyer.phone = '';
-console.log('Validation check - payment and phone invalid: ', buyer.validation());
-
-buyer.cleanBuyerData();
-console.log('Clean buyer data: ', JSON.stringify(buyer, null, 2));
-
-// Cart initialization
-console.log('\n=== Cart Testing ===');
-
-const cart = new Cart();
-console.log('Create Cart object: ', JSON.stringify(cart, null, 2));
-
-console.log('Get selected products list: ', JSON.stringify(cart.productsList, null, 2));
-
-cart.addProduct(apiProducts.items[0]);
-cart.addProduct(apiProducts.items[1]);
-console.log('Add products to cart: ', JSON.stringify(cart.productsList, null, 2));
-
-console.log('Calculate cart total: ', cart.getTotalCartPrice());
-
-console.log('Get product count in cart: ', cart.getProductCountInCart());
-
-cart.discardProduct(apiProducts.items[1]);
-console.log('Remove product from cart: ', JSON.stringify(cart.productsList, null, 2));
-
-cart.discardProduct(apiProducts.items[3]);
-console.log('Try to remove non-existent product: ', JSON.stringify(cart.productsList, null, 2));
-
-console.log('Successful product search by id: ', cart.isProductInCartById('c101ab44-ed99-4a54-990d-47aa2bb4e7d9'));
-console.log('Failed product search by id: ', cart.isProductInCartById('854cef69-976d-4c2a-a18c-2aa45046c390'));
-
-cart.cleanCart()
-console.log('Clean cart: ', JSON.stringify(cart.productsList, null, 2));
-
-// Server integration
-console.log('\n=== ClientApi Testing ===');
-const clientApi: ClientApi = new ClientApi(new Api(API_URL));
-
-async function getRemoteCatalog() {
-    try {
-        const data: TGetResponse = await clientApi.getData();
-        const productList: IProduct[] = data.items;
-        console.log('Catalog from server: ', JSON.stringify(productList, null, 2));
-    }
-    catch(error){
-        console.log('Failed to get catalog from server', error);
+        const errorMessages: string[] = [];
+        if (hasPaymentError) errorMessages.push(errors.payment!);
+        if (hasAddressError) errorMessages.push(errors.address!);
+        currentOrderForm.errors = errorMessages;
     }
 }
 
-getRemoteCatalog();
+function validateContactsForm() {
+    const errors = buyer.validation();
+    const hasEmailError = !!errors.email;
+    const hasPhoneError = !!errors.phone;
 
-// Test order submission
-console.log('\n=== POST Request Testing ===');
-const buyer2 = new Buyer();
-buyer2.payment = 'cash';
-buyer2.address = 'Земля';
-buyer2.phone = '555 55 55';
-buyer2.email = 'ganja@mail.ru';
+    if (currentContactsForm) {
+        currentContactsForm.valid = !hasEmailError && !hasPhoneError;
 
-const cart2 = new Cart();
-cart2.addProduct(apiProducts.items[0]);
-cart2.addProduct(apiProducts.items[1]);
-
-const request: TPostRequest = ({
-    payment: buyer2.payment,
-    email: buyer2.email,
-    phone: buyer2.phone,
-    address: buyer2.address,
-    total: cart2.getTotalCartPrice(),
-    items: [
-        apiProducts.items[0].id,
-        apiProducts.items[1].id
-    ]
-})
-
-async function setDataToServer() {
-    try {
-        const postResponse: TPostResponse = await clientApi.setData(request);
-        console.log('Server response to POST request: ', JSON.stringify(postResponse, null, 2));
-    }
-    catch(error){
-        console.log('Failed to send data to server', error);
+        const errorMessages: string[] = [];
+        if (hasEmailError) errorMessages.push(errors.email!);
+        if (hasPhoneError) errorMessages.push(errors.phone!);
+        currentContactsForm.errors = errorMessages;
     }
 }
 
-setDataToServer();
+function updateBasketView() {
+    const products = cart.productsList;
+    const cardElements = products.map((product, index) => {
+        const cardElement = cloneTemplate<HTMLElement>(cardBasketTemplate);
+        const card = new CardBasket(cardElement);
+        card.render({
+            id: product.id,
+            title: product.title,
+            price: product.price
+        });
+        card.index = index + 1;
+        return cardElement;
+    });
+
+    basket.items = cardElements;
+    basket.total = cart.getTotalCartPrice();
+    basket.valid = products.length > 0;
+}
+
+// ===== Get catalog from server =====
+async function fetchCatalog() {
+    try {
+        const data: TGetResponse = await api.getData();
+        productCatalog.productsList = data.items;
+    } catch (error) {
+        console.error('Failed to load catalog:', error);
+    }
+}
+
+// ===== Event Handlers =====
+
+// cards:changed — render catalog gallery
+events.on('cards:changed', (data: { products: IProduct[] }) => {
+    const cardElements = data.products.map((product) => {
+        const cardElement = cloneTemplate<HTMLElement>(cardCatalogTemplate);
+        const card = new CardCatalog(cardElement, events);
+        card.render(product);
+        return cardElement;
+    });
+    page.gallery = cardElements;
+});
+
+// card:select — show product preview in modal
+events.on('card:select', (data: { id: string }) => {
+    const product = productCatalog.getProductByID(data.id);
+    if (product) {
+        productCatalog.focusCard = product;
+    }
+});
+
+// preview:changed — update modal with product details
+events.on('preview:changed', (data: { product: IProduct | null }) => {
+    if (!data.product) return;
+
+    const previewElement = cloneTemplate<HTMLElement>(cardPreviewTemplate);
+    const preview = new CardPreview(previewElement, events);
+    preview.render(data.product);
+
+    // Check if product is in cart
+    if (cart.isProductInCartById(data.product.id)) {
+        preview.inCart = true;
+    } else {
+        preview.inCart = false;
+    }
+
+    page.locked = true;
+    modal.render({ content: previewElement });
+});
+
+// card:toBasket — add product to cart and close modal
+events.on('card:toBasket', (data: { id: string }) => {
+    const product = productCatalog.getProductByID(data.id);
+    if (product && !cart.isProductInCartById(data.id)) {
+        cart.addProduct(product);
+    }
+    modal.close();
+    productCatalog.focusCard = null;
+});
+
+// card:deleteFromBasket — remove product from cart (from preview)
+events.on('card:deleteFromBasket', (data: { id: string }) => {
+    const product = productCatalog.getProductByID(data.id);
+    if (product) {
+        cart.discardProduct(product);
+    }
+    productCatalog.focusCard = null;
+    modal.close();
+});
+
+// basket:changed — update cart counter
+events.on('basket:changed', () => {
+    page.counter = cart.getProductCountInCart();
+});
+
+// basket:delete — remove product from cart (from basket list)
+events.on('basket:delete', (data: { id: string }) => {
+    const product = productCatalog.getProductByID(data.id);
+    if (product) {
+        cart.discardProduct(product);
+    }
+    updateBasketView();
+});
+
+// basket:open — show basket modal
+events.on('basket:open', () => {
+    updateBasketView();
+    page.locked = true;
+    modal.render({ content: basket.render() });
+});
+
+// order:open — open order form
+events.on('order:open', () => {
+    const orderElement = cloneTemplate<HTMLFormElement>(orderTemplate);
+    currentOrderForm = new OrderForm(orderElement, events);
+
+    if (buyer.payment) {
+        currentOrderForm.payment = buyer.payment;
+    }
+    if (buyer.address) {
+        currentOrderForm.address = buyer.address;
+    }
+
+    validateOrderForm();
+    page.locked = true;
+    modal.render({ content: orderElement });
+});
+
+// payment:change — update payment method and re-validate
+events.on('payment:change', (data: { payment: TPayment }) => {
+    buyer.payment = data.payment;
+    validateOrderForm();
+});
+
+// orderInput:change — update order form fields
+events.on('orderInput:change', (data: { field: string; value: string }) => {
+    if (data.field === 'address') {
+        buyer.address = data.value;
+    }
+    validateOrderForm();
+});
+
+// order:submit — go to contacts form
+events.on('order:submit', () => {
+    const errors = buyer.validation();
+    if (errors.payment || errors.address) return;
+
+    const contactsElement = cloneTemplate<HTMLFormElement>(contactsTemplate);
+    currentContactsForm = new ContactsForm(contactsElement, events);
+
+    if (buyer.email) {
+        currentContactsForm.email = buyer.email;
+    }
+    if (buyer.phone) {
+        currentContactsForm.phone = buyer.phone;
+    }
+
+    validateContactsForm();
+    page.locked = true;
+    modal.render({ content: contactsElement });
+});
+
+// contactsInput:change — update contacts form fields
+events.on('contactsInput:change', (data: { field: string; value: string }) => {
+    if (data.field === 'email') {
+        buyer.email = data.value;
+    } else if (data.field === 'phone') {
+        buyer.phone = data.value;
+    }
+    validateContactsForm();
+});
+
+// contacts:submit — send order to server
+events.on('contacts:submit', () => {
+    const errors = buyer.validation();
+    if (errors.email || errors.phone) return;
+
+    const request: TPostRequest = {
+        payment: buyer.payment,
+        email: buyer.email,
+        phone: buyer.phone,
+        address: buyer.address,
+        total: cart.getTotalCartPrice(),
+        items: cart.productsList.map(product => product.id)
+    };
+
+    api.setData(request)
+        .then((response: TPostResponse) => {
+            cart.cleanCart();
+            buyer.cleanBuyerData();
+            currentOrderForm = null;
+            currentContactsForm = null;
+
+            const successComponent = new Success(
+                document.getElementById('success') as HTMLTemplateElement,
+                events
+            );
+            successComponent.total = response.total;
+            page.locked = true;
+            modal.render({ content: successComponent.render() });
+        })
+        .catch((error) => {
+            console.error('Failed to submit order:', error);
+        });
+});
+
+// modal:close — close modal and unlock page
+events.on('modal:close', () => {
+    modal.close();
+    page.locked = false;
+    currentOrderForm = null;
+    currentContactsForm = null;
+});
+
+// ===== Initialize =====
+fetchCatalog();
