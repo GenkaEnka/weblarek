@@ -1,5 +1,5 @@
 import {IProduct} from '../../types/index.ts'
-import {IEvents} from '../base/Events.ts'
+import {IEvents} from '../base/events.ts'
 
 export class Cart {
     private _productsList: IProduct[];
@@ -18,8 +18,8 @@ export class Cart {
     }
 
     discardProduct(product: IProduct): void {
-        if(this.isProductInCartById(product.id)) {
-            const index = this._productsList.indexOf(product); 
+        const index = this._productsList.findIndex(item => item.id === product.id);
+        if (index !== -1) {
             this._productsList.splice(index, 1);
             this.events.emit('basket:changed', { products: this._productsList });
         }

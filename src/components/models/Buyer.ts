@@ -1,6 +1,6 @@
 import {TPayment} from '../../types/index.ts'
 import {TBuyerErrors} from '../../types/index.ts'
-import {IEvents} from '../base/Events.ts'
+import {IEvents} from '../base/events.ts'
 
 export class Buyer {
     private _payment: TPayment;

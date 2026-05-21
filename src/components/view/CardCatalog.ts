@@ -1,5 +1,5 @@
 import { Card } from '../base/Card';
-import { IEvents } from '../base/Events';
+import { IEvents } from '../base/events';
 
 export class CardCatalog extends Card {
     constructor(container: HTMLElement, events?: IEvents) {

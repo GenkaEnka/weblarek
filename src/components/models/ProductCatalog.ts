@@ -1,5 +1,5 @@
 import {IProduct} from '../../types/index.ts'
-import {IEvents} from '../base/Events.ts'
+import {IEvents} from '../base/events.ts'
 
 export class ProductCatalog {
     private _productsList: IProduct[];

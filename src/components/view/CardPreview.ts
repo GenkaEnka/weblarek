@@ -1,5 +1,5 @@
 import { Card } from '../base/Card';
-import { IEvents } from '../base/Events';
+import { IEvents } from '../base/events';
 
 export class CardPreview extends Card {
     protected _description?: HTMLElement;

@@ -1,5 +1,5 @@
 import { Form } from '../base/Form';
-import { IEvents } from '../base/Events';
+import { IEvents } from '../base/events';
 
 export class ContactsForm extends Form {
     constructor(container: HTMLFormElement, events: IEvents) {

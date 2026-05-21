@@ -1,11 +1,12 @@
 import { Card } from '../base/Card';
+import { IEvents } from '../base/events';
 
 export class CardBasket extends Card {
     protected _index: HTMLElement;
     protected _deleteButton: HTMLButtonElement;
 
-    constructor(container: HTMLElement) {
-        super(container);
+    constructor(container: HTMLElement, events?: IEvents) {
+        super(container, events);
         this._index = container.querySelector('.basket__item-index') as HTMLElement;
         this._deleteButton = container.querySelector('.basket__item-delete') as HTMLButtonElement;
 

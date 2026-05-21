@@ -1,5 +1,5 @@
 import { Component } from './Component';
-import { IEvents } from './Events';
+import { IEvents } from './events';
 import { IProduct } from '../../types/index';
 import { ensureElement } from '../../utils/utils';
 import { CDN_URL, categoryMap } from '../../utils/constants';

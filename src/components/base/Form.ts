@@ -1,4 +1,4 @@
-import { IEvents } from './Events';
+import { IEvents } from './events';
 
 export class Form {
     protected _form: HTMLFormElement;

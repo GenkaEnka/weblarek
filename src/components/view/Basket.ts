@@ -1,5 +1,5 @@
 import { Component } from '../base/Component';
-import { IEvents } from '../base/Events';
+import { IEvents } from '../base/events';
 import { ensureElement, cloneTemplate } from '../../utils/utils';
 
 export class Basket extends Component<{}> {
