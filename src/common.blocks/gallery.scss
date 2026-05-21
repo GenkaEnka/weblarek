@@ -1,10 +1,9 @@
-@use "../scss/variables" as *;
-@use "../scss/mixins";
+@use "variables" as *;
+@use "mixins";
 
 .gallery {
   @include mixins.container;
   @include mixins.grid(600px, 24px);
-  padding-top:80px;
 
   &__item {
     border: none;

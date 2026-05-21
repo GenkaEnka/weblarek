@@ -1,5 +1,5 @@
-@use "../scss/variables" as *;
-@use "../scss/mixins";
+@use "variables" as *;
+@use "mixins";
 
 .order-success {
   @include mixins.flex(column);

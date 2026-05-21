@@ -1,15 +1,15 @@
-@use "../variables" as *;
+@use "variables" as *;
 
 @mixin container($top: $defaultPadding, $bottom: $defaultPadding) {
   margin: auto;
   width: 100%;
   box-sizing: border-box;
   max-width: $maxPageWidth;
-  padding: $top 0 $bottom;
+  padding: $top $defaultPadding $bottom;
 }
 
 @mixin sublayer {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;

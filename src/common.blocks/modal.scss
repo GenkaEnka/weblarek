@@ -1,5 +1,5 @@
-@use "../scss/variables" as *;
-@use "../scss/mixins";
+@use "variables" as *;
+@use "mixins";
 
 .modal {
   @include mixins.sublayer;
