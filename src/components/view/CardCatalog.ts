@@ -1,12 +1,22 @@
-import { Card } from '../base/Card';
-import { IEvents } from '../base/events';
+import { CardDetailed } from '../base/CardDetailed';
+import { IProduct } from '../../types/index';
 
-export class CardCatalog extends Card {
-    constructor(container: HTMLElement, events?: IEvents) {
-        super(container, events);
+export class CardCatalog extends CardDetailed {
+    private _onClick: (id: string) => void;
 
-        container.addEventListener('click', () => {
-            this.events?.emit('card:select', { id: this.id });
-        });
+    constructor(container: HTMLElement, onClick: (id: string) => void) {
+        super(container);
+        this._onClick = onClick;
+    }
+
+    render(data?: Partial<IProduct>): HTMLElement {
+        super.render(data);
+        if (data && data.id) {
+            const id = data.id;
+            this.container.onclick = () => {
+                this._onClick(id);
+            };
+        }
+        return this.container;
     }
 }

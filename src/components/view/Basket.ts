@@ -14,6 +14,9 @@ export class Basket extends Component<{}> {
         this._totalPrice = ensureElement<HTMLElement>('.basket__price', container);
         this._checkoutButton = ensureElement<HTMLButtonElement>('.basket__button', container);
 
+        // initial state: empty basket -> button disabled
+        this._checkoutButton.disabled = true;
+
         this._checkoutButton.addEventListener('click', () => {
             this.events.emit('order:open');
         });

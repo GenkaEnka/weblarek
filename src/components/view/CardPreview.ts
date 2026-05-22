@@ -1,48 +1,34 @@
-import { Card } from '../base/Card';
+import { CardDetailed } from '../base/CardDetailed';
 import { IEvents } from '../base/events';
+import { IProduct } from '../../types/index';
 
-export class CardPreview extends Card {
-    protected _description?: HTMLElement;
+export class CardPreview extends CardDetailed {
+    private _onToggle: () => void;
 
-    constructor(container: HTMLElement, events?: IEvents) {
+    constructor(container: HTMLElement, events: IEvents) {
         super(container, events);
-        this._description = container.querySelector('.card__text') || undefined;
-
+        this._onToggle = () => {
+            this.events?.emit('card:previewToggle');
+        };
         if (this._button) {
-            this._button.addEventListener('click', () => {
-                if (this._button && this._button.textContent === 'Купить') {
-                    this.events?.emit('card:toBasket', { id: this.id });
-                } else {
-                    this.events?.emit('card:deleteFromBasket', { id: this.id });
-                }
-            });
+            this._button.onclick = this._onToggle;
         }
     }
 
-    set description(value: string) {
-        if (this._description) {
-            this._description.textContent = value;
-        }
-    }
-
-    set inCart(value: boolean) {
+    set buttonText(value: string) {
         if (this._button) {
-            this._button.textContent = value ? 'Удалить из корзины' : 'Купить';
+            this._button.textContent = value;
         }
     }
 
-    set price(value: number | null) {
-        if (value === null) {
-            this._price.textContent = 'Бесценно';
-            if (this._button) {
-                this._button.disabled = true;
-                this._button.textContent = 'Недоступно';
-            }
-        } else {
-            this._price.textContent = `${value} синапсов`;
-            if (this._button) {
-                this._button.disabled = false;
-            }
+    set buttonDisabled(value: boolean) {
+        if (this._button) {
+            this._button.disabled = value;
         }
+    }
+
+    render(data?: Partial<IProduct>): HTMLElement {
+        super.render(data);
+        return this.container;
     }
 }

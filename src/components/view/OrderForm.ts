@@ -13,32 +13,25 @@ export class OrderForm extends Form {
         this._cashButton = ensureElement<HTMLButtonElement>('button[name="cash"]', container);
 
         this._cardButton.addEventListener('click', () => {
-            this.togglePayment('card');
             this.events.emit('payment:change', { payment: 'card' as TPayment });
         });
 
         this._cashButton.addEventListener('click', () => {
-            this.togglePayment('cash');
             this.events.emit('payment:change', { payment: 'cash' as TPayment });
         });
     }
 
-    private togglePayment(payment: TPayment) {
+    set payment(value: TPayment) {
         this._cardButton.classList.remove('button_alt-active');
         this._cashButton.classList.remove('button_alt-active');
-        if (payment === 'card') {
+        if (value === 'card') {
             this._cardButton.classList.add('button_alt-active');
         } else {
             this._cashButton.classList.add('button_alt-active');
         }
     }
 
-    set payment(value: TPayment) {
-        this.togglePayment(value);
-    }
-
     set address(value: string) {
         (this.formElement.elements.namedItem('address') as HTMLInputElement).value = value;
     }
-
 }
